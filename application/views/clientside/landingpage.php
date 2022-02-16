@@ -58,7 +58,7 @@
 						<h2 class="text-white mt-0">Cek Kesehatan Kamu Disini</h2>
 						<hr class="divider divider-light" />
 						<p class="text-white-75 mb-4">Cek kesehatan kamu dengan cara mengisi form yang sesuai dengan gejala yang kamu alami</p>
-						<a class="btn btn-info btn-xl" style="color: whitesmoke;" href="<?= base_url(); ?>welcome/proses">Cek Sekarang!</a>
+						<a class="btn btn-info btn-xl" style="color: whitesmoke;" href="<?= base_url(); ?>welcome/diagnosis">Cek Sekarang!</a>
 					</div>
 				</div>
 			</div>

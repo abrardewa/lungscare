@@ -24,12 +24,18 @@ class Modelpenyakit extends CI_Model
     public function jlhpenyakit()
     {
         $this->db->select('penyakit');
-        return $this->db->get('penyakit')->result_array();
+        $query = $this->db->get('penyakit')->result_array();
+        return array_map(function ($value) {
+            return $value['penyakit'];
+        }, $query);
     }
     public function jlhgejala()
     {
         $this->db->select('gejala');
-        return $this->db->get('penyakit')->result_array();
+        $query = $this->db->get('penyakit')->result_array();
+        return array_map(function ($value) {
+            return $value['gejala'];
+        }, $query);
     }
 
     public function updatedata($where, $data, $table)

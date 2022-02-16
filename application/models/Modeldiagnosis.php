@@ -36,6 +36,9 @@ class Modeldiagnosis extends CI_Model
     public function gejala()
     {
         $this->db->select('gejala');
-        return $this->db->get('pertanyaandiagnosis')->result_array();
+        $query = $this->db->get('pertanyaandiagnosis')->result_array();
+        return array_map(function ($value) {
+            return $value['gejala'];
+        }, $query);
     }
 }

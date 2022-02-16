@@ -50,22 +50,22 @@
                                 <div class="row justify-content-center mb-5">
                                     <div class="col-xl-9 shadow p-3 mb-5  border" style="background-color: white;">
                                         <div class="col-xl p-3 ">
-                                            <form action="<?= base_url('Welcome/diagnosis'); ?>" method="post">
+                                            <form action="<?= base_url('Welcome/proses'); ?>" method="post">
                                                 <div class="mb-3 mt-3">
                                                     <label for="nama" class="form-label">1.</label>
                                                     <label for="nama" class="form-label">Nama</label>
-                                                    <input type="text" class="form-control rounded-pill" id="nama" placeholder="Masukkan nama lengkap anda..." required>
+                                                    <input type="text" class="form-control rounded-pill" id="nama" name="nama" placeholder="Masukkan nama lengkap anda..." value="<?= set_value('nama'); ?>">
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="alamat" class="form-label">2.</label>
                                                     <label for="alamat" class="form-label">Alamat</label>
-                                                    <input type="text" class="form-control rounded-pill" id="alamat" placeholder="Masukkan alamat anda..." required>
+                                                    <input type="text" class="form-control rounded-pill" id="alamat" name="alamat" placeholder="Masukkan alamat anda..." value="<?= set_value('alamat'); ?>">
                                                 </div>
-                                                <div class="mb-3">
+                                                <!-- <div class="mb-3">
                                                     <label for="bb" class="form-label">3.</label>
                                                     <label for="bb" class="form-label">Besar Penurunan Berat Badan (Isi 0 Jika tidak ada penurunan berat badan)</label>
                                                     <input type="text" class="form-control rounded-pill" id="bb" placeholder="Masukkan besar penurunan berat badan anda... (Kg)" required>
-                                                </div>
+                                                </div> -->
                                                 <?php
                                                 $no = 4;
                                                 $id = 0;
@@ -73,34 +73,10 @@
                                                     <div class="mb-3">
                                                         <label for="pertanyaan" class="form-label"><?php echo $no++; ?>.</label>
                                                         <label for="pertanyaan" class="form-label"><?= $tanya['pertanyaan']; ?></label>
-                                                        <!-- <input class="form-check-input" type="hidden" name="gejala <?= $id; ?>" id="gejala" value="<?= set_value('gejala' . $id, $tanya['gejala']); ?> required"> -->
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="radio" name="jawaban <?= $id; ?>" id="jawaban" value="0.9" <?= set_radio('jawaban' . $id, '0.9') ?> required>
-                                                            <label class="form-check-label" for="jawaban">
-                                                                Sangat / Sering
-                                                            </label>
-                                                        </div>
-                                                        <div class="form-check" value="<?= set_value('jawaban'); ?>">
-                                                            <input class="form-check-input" type="radio" name="jawaban <?= $id; ?>" id="jawaban" value="0.6" <?= set_radio('jawaban' . $id, '0.6') ?> required>
-                                                            <label class="form-check-label" for="jawaban">
-                                                                Ya / Cukup Sering
-                                                            </label>
-                                                        </div>
-                                                        <div class="form-check" value="<?= set_value('jawaban'); ?>">
-                                                            <input class="form-check-input" type="radio" name="jawaban <?= $id; ?>" id="jawaban" value="0.3" <?= set_radio('jawaban' . $id, '0.3') ?> required>
-                                                            <label class="form-check-label" for="jawaban">
-                                                                Sedikit / Jarang
-                                                            </label>
-                                                        </div>
-                                                        <div class="form-check" value="<?= set_value('jawaban'); ?>">
-                                                            <input class="form-check-input" type="radio" name="jawaban <?= $id; ?>" id="jawaban" value="0" <?= set_radio('jawaban' . $id, '0') ?> required>
-                                                            <label class="form-check-label" for="jawaban">
-                                                                Tidak / Tidak Pernah
-                                                            </label>
-                                                        </div>
+                                                        <input type="text" class="form-control rounded-pill" id="alamat" name="alamat" placeholder="Masukkan alamat anda..." value="<?= set_value('alamat'); ?>">
                                                     </div>
                                                     <label hidden><?= $id++; ?></label>
-                                                <?php endforeach; ?>
+                                                <?php endforeach; ?> -->
                                                 <div class="form-group">
                                                     <br>
                                                     <button type="submit" class="btn btn-info col-sm-2 ">Submit</button>

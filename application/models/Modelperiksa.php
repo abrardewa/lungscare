@@ -11,6 +11,10 @@ class Modelperiksa extends CI_Model
     {
         $this->db->insert('user', $data);
     }
+    public function insert_data2($data)
+    {
+        $this->db->insert('diagnosis', $data);
+    }
     public function ambil_id($id)
     {
         return $this->db->get_where('user', ['id' => $id])->row_array();

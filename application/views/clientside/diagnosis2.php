@@ -22,54 +22,104 @@
 
 <body id="page-top">
     <!-- Navigation-->
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0" style="text-align: center;">
-                <thead>
-                    <tr>
-                        <th>Penyakit</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-
-                    <?php
-                    // $sum = 0;
-                    // for ($i = 1; $i < count($penyakit); $i++) {
-                    //     # code...
-                    //     if ($penyakit[$i - 1] != $penyakit[$i]) {
-                    //         $sum++;
-                    //     }
-                    // }
-                    echo $sum;
-                    ?>
-
-                </tbody>
-
-            </table>
-
-        </div>
-    </div>
-    <!-- <?php
-            $sum = 0;
-            foreach ($penyakit as $pen) : ?>
-        <label for="pertanyaan" class="form-label"><?php echo $pen++; ?>.</label>
-    <?php endforeach; ?> -->
-    <!-- Footer-->
-    <footer class=" bg-dark py-5">
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top py-3" style="background-color: #55BFD8;" id="mainNav">
         <div class="container px-4 px-lg-5">
-            <div class="small text-center" style="color: whitesmoke;">Copyright &copy; 2021 - Abrar Dewa Pratama Barus</div>
+            <a class="navbar-brand" style="color: #132863;" href="/"><i class="fa  fa-stethoscope fs-2 " style="color: #132863;"></i>LungsCare</a>
+            <button class="navbar-toggler navbar-toggler-right" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ms-auto my-2 my-lg-0">
+                    <li class="nav-item"><a class="nav-link " href="<?= base_url('welcome') ?>">Home</a></li>
+                    <li class=" nav-item"><a class="nav-link active" style="border-bottom: 3px solid ;" href="#">Diagnosis</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?= base_url('welcome') ?>/faq" ">FAQ</a></li>
+                </ul>
+            </div>
         </div>
-    </footer>
-    <!-- Bootstrap core JS-->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- SimpleLightbox plugin JS-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/SimpleLightbox/2.1.0/simpleLightbox.min.js"></script>
-    <!-- Core theme JS-->
-    <script src="<?= base_url() ?>vendor/starter/js/scripts.js"></script>
+    </nav>
+    <!-- Masthead-->
+    <div>
+                        <section class=" page-section" id="contact">
+                            <div class="container">
+                                <div class="row gx-4 gx-lg-5 justify-content-center" style="color: #072D5B;">
+                                    <div class="col-lg-8 col-xl-6 text-center">
+                                        <h2 class="mt-0">Hasil Diagnosa Kamu</h2>
+                                        <hr class="divider" />
+                                        <p class="text mb-5">Hasil diagnosa ini merupakan perkiraan yang dilakukan oleh sistem LungsCare.</p>
+                                    </div>
+                                </div>
+                                <div class="row justify-content-center mb-5">
+                                    <div class="col-xl-7 shadow p-3 mb-5  border" style="background-color: white;">
 
-    <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
-    <script src="https://use.fontawesome.com/d843ff72fd.js"></script>
+                                        <div class="col-xl p-3 ">
+                                            <div class="row align-items-start">
+                                                <div class="col-3 ">
+                                                    Nama
+                                                </div>
+                                                <div class="col-1 text-end">
+                                                    :
+                                                </div>
+                                                <div class="col">
+                                                    <?= $nama ?>
+                                                </div>
+                                            </div>
+                                            <div class="row align-items-start pt-3">
+                                                <div class="col-3 ">
+                                                    Alamat
+                                                </div>
+                                                <div class="col-1 text-end">
+                                                    :
+                                                </div>
+                                                <div class="col">
+                                                    <?= $alamat ?>
+                                                </div>
+                                            </div>
+                                            <div class="row align-items-start pt-3">
+                                                <div class="col-3 ">
+                                                    Hasil Diagnosa Sistem
+                                                </div>
+                                                <div class="col-1 text-end">
+                                                    :
+                                                </div>
+                                                <div class="col-5">
+                                                    <?php for ($i = 0; $i < count($hasil); $i++) {
+                                                        for ($j = 0; $j < count($hasil[$i]); $j++) {
+                                                            printf($hasil[$i][$j]);
+                                                        }
+                                                    } ?>
+                                                </div>
+                                            </div>
+                                            <!-- <div class="row align-items-start pt-3">
+                                                <div class="col-3 ">
+                                                    Persentase Diagnosa Sistem
+                                                </div>
+                                                <div class="col-1 text-end">
+                                                    :
+                                                </div>
+                                                <div class="col">
+
+                                                    :<?= $pemeriksa['persentase'] ?>
+                                                </div>
+                                            </div> -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </section>
+            </div>
+            <!-- Footer-->
+            <footer class=" bg-dark py-5">
+                <div class="container px-4 px-lg-5">
+                    <div class="small text-center" style="color: whitesmoke;">Copyright &copy; 2021 - Abrar Dewa Pratama Barus</div>
+                </div>
+            </footer>
+            <!-- Bootstrap core JS-->
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+            <!-- SimpleLightbox plugin JS-->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/SimpleLightbox/2.1.0/simpleLightbox.min.js"></script>
+            <!-- Core theme JS-->
+            <script src="<?= base_url() ?>vendor/starter/js/scripts.js"></script>
+
+            <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+            <script src="https://use.fontawesome.com/d843ff72fd.js"></script>
 </body>
 
 </html>

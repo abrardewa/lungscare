@@ -54,17 +54,17 @@
                                                 <div class="mb-3 mt-3">
                                                     <label for="nama" class="form-label">1.</label>
                                                     <label for="nama" class="form-label">Nama</label>
-                                                    <input type="text" class="form-control rounded-pill" id="nama" placeholder="Masukkan nama lengkap anda..." required>
+                                                    <input type="text" class="form-control rounded-pill" id="nama" name="nama" placeholder="Masukkan nama lengkap anda..." value="<?= set_value('nama'); ?>">
                                                 </div>
-                                                <div class="mb-3">
+                                                <div class=" mb-3">
                                                     <label for="alamat" class="form-label">2.</label>
                                                     <label for="alamat" class="form-label">Alamat</label>
-                                                    <input type="text" class="form-control rounded-pill" id="alamat" placeholder="Masukkan alamat anda..." required>
+                                                    <input type="text" class="form-control rounded-pill" id="alamat" name="alamat" placeholder="Masukkan alamat anda..." value="<?= set_value('alamat'); ?>">
                                                 </div>
                                                 <div class="mb-3">
                                                     <label for="bb" class="form-label">3.</label>
                                                     <label for="bb" class="form-label">Besar Penurunan Berat Badan (Isi 0 Jika tidak ada penurunan berat badan)</label>
-                                                    <input type="text" class="form-control rounded-pill" id="bb" placeholder="Masukkan besar penurunan berat badan anda... (Kg)" required>
+                                                    <input type="text" class="form-control rounded-pill" id="bb" name="bb" placeholder="Masukkan besar penurunan berat badan anda... (Kg)" value="<?= set_value('bb'); ?>">
                                                 </div>
                                                 <?php
                                                 $no = 4;
@@ -73,28 +73,28 @@
                                                     <div class="mb-3">
                                                         <label for="pertanyaan" class="form-label"><?php echo $no++; ?>.</label>
                                                         <label for="pertanyaan" class="form-label"><?= $tanya['pertanyaan']; ?></label>
-                                                        <!-- <input class="form-check-input" type="hidden" name="gejala <?= $id; ?>" id="gejala" value="<?= set_value('gejala' . $id, $tanya['gejala']); ?> required"> -->
+                                                        <input type="hidden" name="gejala<?= $id; ?>" id="gejala<?= $id; ?>" value="<?= $tanya['gejala']; ?> ">
                                                         <div class="form-check">
-                                                            <input class="form-check-input" type="radio" name="jawaban <?= $id; ?>" id="jawaban" value="0.9" <?= set_radio('jawaban' . $id, '0.9') ?> required>
                                                             <label class="form-check-label" for="jawaban">
+                                                                <input class="form-check-input" type="radio" name="jawaban<?= $id; ?>" id="jawaban<?= $id; ?>" value="0.9">
                                                                 Sangat / Sering
                                                             </label>
                                                         </div>
                                                         <div class="form-check" value="<?= set_value('jawaban'); ?>">
-                                                            <input class="form-check-input" type="radio" name="jawaban <?= $id; ?>" id="jawaban" value="0.6" <?= set_radio('jawaban' . $id, '0.6') ?> required>
                                                             <label class="form-check-label" for="jawaban">
+                                                                <input class="form-check-input" type="radio" name="jawaban<?= $id; ?>" id="jawaban<?= $id; ?>" value="0.6">
                                                                 Ya / Cukup Sering
                                                             </label>
                                                         </div>
                                                         <div class="form-check" value="<?= set_value('jawaban'); ?>">
-                                                            <input class="form-check-input" type="radio" name="jawaban <?= $id; ?>" id="jawaban" value="0.3" <?= set_radio('jawaban' . $id, '0.3') ?> required>
                                                             <label class="form-check-label" for="jawaban">
+                                                                <input class="form-check-input" type="radio" name="jawaban<?= $id; ?>" id="jawaban<?= $id; ?>" value="0.3">
                                                                 Sedikit / Jarang
                                                             </label>
                                                         </div>
                                                         <div class="form-check" value="<?= set_value('jawaban'); ?>">
-                                                            <input class="form-check-input" type="radio" name="jawaban <?= $id; ?>" id="jawaban" value="0" <?= set_radio('jawaban' . $id, '0') ?> required>
                                                             <label class="form-check-label" for="jawaban">
+                                                                <input class="form-check-input" type="radio" name="jawaban<?= $id; ?>" id="jawaban<?= $id; ?>" value="0">
                                                                 Tidak / Tidak Pernah
                                                             </label>
                                                         </div>

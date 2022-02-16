@@ -17,10 +17,10 @@ class Modelpemeriksa extends CI_Model
     //     $this->db->delete('guru');
     // }
 
-    // public function ambil_id_guru($id)
-    // {
-    //     return $this->db->get_where('guru', ['id' => $id])->row_array();
-    // }
+    public function ambildata($nama)
+    {
+        return $this->db->get_where('user', ['nama' => $nama])->row_array();
+    }
     // public function updatedata($where, $data, $table)
     // {
 
