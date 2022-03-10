@@ -219,16 +219,19 @@ class Welcome extends CI_Controller
 	}
 	private function fuzzy($value, $limit)
 	{
-		$limit2 = $limit * 0.5;
+		// $limit2 = $limit * 0.5;
 		$limit3 = 0;
+		$value = $value + 0;
 		if ($value >= $limit) {
 			$newvalue = 0.9;
-		} elseif ($value >= $limit2 && $value < $limit) {
-			$newvalue = ($value - $limit2) / ($limit - $limit2);
-		} elseif ($value > $limit3 && $value < $limit2) {
-			$newvalue = ($value - $limit2) / ($limit - $limit2);
-		} else {
-			$newvalue = 0;
+		} elseif ($value > $limit3 && $value < $limit) {
+			$newvalue = ($value - $limit3) / ($limit - $limit3);
+		}
+		// elseif ($value > $limit3 && $value < $limit2) {
+		// 	$newvalue = ($value - $limit2) / ($limit - $limit2);
+		// }
+		else {
+			$newvalue = 1;
 		}
 		return $newvalue;
 	}
@@ -242,8 +245,9 @@ class Welcome extends CI_Controller
 				array_push($newgejala, $gejala[$i]);
 			}
 		}
+
 		if ($bb != 0) {
-			array_push($newbobot, $this->fuzzy($bb, 15));
+			array_push($newbobot, $this->fuzzy($bb, 20));
 			array_push($newgejala, "beratbadanturun");
 		}
 		$n = 1;
@@ -268,6 +272,7 @@ class Welcome extends CI_Controller
 			// array_push($newgejala, $gejalapenyakit[$j]);
 
 		}
+
 		$newpenyakit = array();
 		for ($i = 0; $i < count($newgejala); $i++) {
 			$sementara = array();
@@ -404,34 +409,51 @@ class Welcome extends CI_Controller
 						}
 						array_push($tempnilai, $sum);
 					}
-					// if ($i == 4) {
+					// if ($i == count($simpanpav) - 1) {
 
 					// 	var_dump($temppenyakit);
 					// 	var_dump($tempnilai);
 					// }
-
 				}
 			}
+			// var_dump($temppenyakit);
+			// var_dump($temppenyakit);
+			// var_dump($tempnilai);
 			$nilai = max($tempnilai);
-			$persentase = ($nilai / $batasatas) * 100;
+			// var_dump($nilai);
+			$simpanpersentase = array();
+			array_push($simpanpersentase, $nilai);
+			$persentase = array();
+			array_push($persentase, $simpanpersentase);
 			for ($i = 0; $i < count($tempnilai); $i++) {
 				if ($tempnilai[$i] == $nilai) {
+					var_dump($temppenyakit[$i]);
 					array_push($hasilpenyakit, $temppenyakit[$i]);
 				}
 			}
 			// var_dump($persentase);
 			// var_dump($hasilpenyakit);
 		} elseif (count($simpanpav) == 1) {
+			$hasilpenyakit = array();
 			$nilai = max($simpanpav);
-			$persentase = ($nilai / $batasatas) * 100;
+			$simpanpersentase = array();
+			array_push($simpanpersentase, $nilai);
+			$persentase = array();
+			array_push($persentase, $simpanpersentase);
 			for ($i = 0; $i < count($simpanpav); $i++) {
 				if ($simpanpav[$i] == $nilai) {
 					array_push($hasilpenyakit, $newpenyakit[$i]);
 				}
 			}
 		} else {
-			$persentase = 0;
-			array_push($hasilpenyakit, "Tidak Sakit");
+			$simpanpersentase = array();
+			array_push($simpanpersentase, 0);
+			$temp = array();
+			$persentase = array();
+			array_push($persentase, $persentase);
+			$hasilpenyakit = array();
+			array_push($temp, "Anda tidak mengidap penyakit paru");
+			array_push($hasilpenyakit, $temp);
 		}
 		// var_dump($temp2);
 		// // var_dump($nextb);
@@ -443,14 +465,15 @@ class Welcome extends CI_Controller
 		// );
 		// $this->Modelpemeriksa->insert_data($data);
 		// $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Data Berhasil Ditambahkan!</div>');
-		$this->hasildiagnosis($nama, $alamat, $hasilpenyakit);
+		$this->hasildiagnosis($nama, $alamat, $hasilpenyakit, $persentase);
 	}
-	public function hasildiagnosis($nama, $alamat, $hasilpenyakit)
+	public function hasildiagnosis($nama, $alamat, $hasilpenyakit, $persentase)
 	{
 		// printf($nama);
 		$data['nama'] = $nama;
 		$data['alamat'] = $alamat;
 		$data['hasil'] = $hasilpenyakit;
+		$data['persentase'] = $persentase;
 
 		$this->load->view('clientside/diagnosis2', $data);
 	}
@@ -668,14 +691,17 @@ class Welcome extends CI_Controller
 	{
 		if ($this->session->userdata('username') != "") {
 			$this->form_validation->set_rules('pertanyaan', 'Pertanyaan', 'required|trim');
+			$this->form_validation->set_rules('penyakit', 'Penyakit', 'required|trim');
 			$this->form_validation->set_rules('jawaban', 'Jawaban', 'required|trim');
 			if ($this->form_validation->run() == FALSE) {
 				$this->load->view('adminside/tambahfaq');
 			} else {
 				$pertanyaan = $this->input->post('pertanyaan', TRUE);
 				$jawaban = $this->input->post('jawaban', TRUE);
+				$penyakit = $this->input->post('penyakit', TRUE);
 				$data = array(
 					'pertanyaan' => $pertanyaan,
+					'penyakit' => $penyakit,
 					'jawaban' => $jawaban,
 				);
 				$this->Modelfaq->insert_data($data);
@@ -838,14 +864,17 @@ class Welcome extends CI_Controller
 
 		$this->form_validation->set_rules('pertanyaan', 'Pertanyaan', 'required|trim');
 		$this->form_validation->set_rules('jawaban', 'Jawaban', 'required|trim');
+		$this->form_validation->set_rules('penyakit', 'Penyakit', 'required|trim');
 		$id = $this->input->post('id');
 		if ($this->form_validation->run() == FALSE) {
 			$this->editfaq($id);
 		} else {
 			$pertanyaan = $this->input->post('pertanyaan', TRUE);
 			$jawaban = $this->input->post('jawaban', true);
+			$penyakit = $this->input->post('penyakit', true);
 			$data = array(
 				'pertanyaan' => $pertanyaan,
+				'penyakit' => $penyakit,
 				'jawaban' => $jawaban,
 			);
 			$where = array('id' => $id);

@@ -37,7 +37,7 @@
     </nav>
     <!-- Masthead-->
     <div>
-                        <section class=" page-section" id="contact">
+        <section class=" page-section" id="contact">
                             <div class="container">
                                 <div class="row gx-4 gx-lg-5 justify-content-center" style="color: #072D5B;">
                                     <div class="col-lg-8 col-xl-6 text-center">
@@ -87,18 +87,22 @@
                                                     } ?>
                                                 </div>
                                             </div>
-                                            <!-- <div class="row align-items-start pt-3">
+                                            <div class="row align-items-start pt-3">
                                                 <div class="col-3 ">
-                                                    Persentase Diagnosa Sistem
+                                                    Nilai Diagnosa Sistem
                                                 </div>
                                                 <div class="col-1 text-end">
                                                     :
                                                 </div>
                                                 <div class="col">
 
-                                                    :<?= $pemeriksa['persentase'] ?>
+                                                    <?php for ($i = 0; $i < count($persentase); $i++) {
+                                                        for ($j = 0; $j < count($persentase[$i]); $j++) {
+                                                            printf($persentase[$i][$j]);
+                                                        }
+                                                    } ?>
                                                 </div>
-                                            </div> -->
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

@@ -17,6 +17,7 @@
 
     <!-- Custom styles for this template-->
     <link href="<?= base_url() ?>vendor/adminstyle/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 
 </head>
 
@@ -147,16 +148,21 @@
                                     <h6 class="m-0 font-weight-bold text-primary">Pertanyaan FAQ</h6>
                                 </div>
                                 <!-- Card Body -->
-                                <div class="card shadow mb-4">
+                                <div class="card shadow">
                                     <div class="card-body">
                                         <form style=" font-size:18px; color:black" action="<?= base_url('Welcome/tambahfaq'); ?>" method="post">
                                             <div class="form-group">
                                                 <label for="pertanyaan">Input Pertanyaan FAQ</label>
-                                                <input style="width: 800px; height: 40px;" type="text" class="form-control" id="pertanyaan" name="pertanyaan" placeholder="Apa itu Asma" value="<?= set_value('pertanyaan'); ?>">
+                                                <input type="text" class="form-control" id="pertanyaan" name="pertanyaan" placeholder="Apa itu Asma" value="<?= set_value('pertanyaan'); ?>">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="penyakit">Input Nama Penyakit</label>
+                                                <input type="text" class="form-control" id="penyakit" name="penyakit" placeholder="Asma" value="<?= set_value('penyakit'); ?>">
                                             </div>
                                             <div class="form-group">
                                                 <label for="jawaban">Input Jawaban FAQ</label>
-                                                <input style="width: 800px; height: 40px;" type="text" class="form-control" id="jawaban" name="jawaban" placeholder="Cth: Asma merupakan..." value="<?= set_value('jawaban'); ?>">
+                                                <input type="hidden" name="jawaban" value="<?= set_value('jawaban') ?>">
+                                                <div type="text" class="form-control" id="jawaban" name="jawaban" placeholder="Cth: Asma merupakan..."><?= set_value('jawaban') ?></div>
                                             </div>
                                             <div class="form-group">
                                                 <br>
@@ -239,6 +245,42 @@
         <!-- Page level custom scripts -->
         <script src="<?= base_url() ?>vendor/adminstyle/js/demo/chart-area-demo.js"></script>
         <script src="<?= base_url() ?>vendor/adminstyle/js/demo/chart-pie-demo.js"></script>
+        <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+        <script>
+            var quill = new Quill('#jawaban', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        [{
+                            header: [1, 2, 3, 4, 5, 6, false]
+                        }],
+                        [{
+                            font: []
+                        }],
+                        ["bold", "italic"],
+                        ["link", "blockquote", "code-block", "image"],
+                        [{
+                            list: "ordered"
+                        }, {
+                            list: "bullet"
+                        }],
+                        [{
+                            script: "sub"
+                        }, {
+                            script: "super"
+                        }],
+                        [{
+                            color: []
+                        }, {
+                            background: []
+                        }],
+                    ]
+                },
+            });
+            quill.on('text-change', function(delta, oldDelta, source) {
+                document.querySelector("input[name='jawaban']").value = quill.root.innerHTML;
+            });
+        </script>
 
 </body>
 

@@ -17,6 +17,7 @@
 
     <!-- Custom styles for this template-->
     <link href="<?= base_url() ?>vendor/adminstyle/css/sb-admin-2.min.css" rel="stylesheet">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 
 </head>
 
@@ -153,11 +154,17 @@
                                             <input type="hidden" name="id" value="<?= $pertanyaanfaq['id']; ?>">
                                             <div class="form-group">
                                                 <label for="pertanyaan">Pertanyaan FAQ</label>
-                                                <input style="width: 800px; height: 40px;" type="text" class="form-control" id="pertanyaan" name="pertanyaan" placeholder="Apa itu Asma" value="<?= $pertanyaanfaq['pertanyaan']; ?>">
+                                                <input type="text" class="form-control" id="pertanyaan" name="pertanyaan" placeholder="Apa itu Asma" value="<?= $pertanyaanfaq['pertanyaan']; ?>">
                                             </div>
                                             <div class="form-group">
-                                                <label for="jawaban">Jawaban FAQ</label>
-                                                <input style="width: 800px; height: 40px;" type="text" class="form-control" id="jawaban" name="jawaban" placeholder="Cth: Asma merupakan..." value="<?= $pertanyaanfaq['jawaban']; ?>">
+                                                <label for="penyakit">Input Nama Penyakit</label>
+                                                <input type="text" class="form-control" id="penyakit" name="penyakit" placeholder="Asma" value="<?= $pertanyaanfaq['penyakit']; ?>">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="jawaban">Input Jawaban FAQ</label>
+                                                <?php $jawaban = form_error('jawaban') ? set_value('jawaban') : $pertanyaanfaq['jawaban'] ?>
+                                                <input type="hidden" name="jawaban" value="<?= html_escape($jawaban) ?>">
+                                                <div type="text" class="form-control" id="jawaban" name="jawaban" placeholder="Cth: Asma merupakan..."><?= $pertanyaanfaq['jawaban']; ?></div>
                                             </div>
                                             <div class="form-group">
                                                 <br>
@@ -240,6 +247,42 @@
         <!-- Page level custom scripts -->
         <script src="<?= base_url() ?>vendor/adminstyle/js/demo/chart-area-demo.js"></script>
         <script src="<?= base_url() ?>vendor/adminstyle/js/demo/chart-pie-demo.js"></script>
+        <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+        <script>
+            var quill = new Quill('#jawaban', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        [{
+                            header: [1, 2, 3, 4, 5, 6, false]
+                        }],
+                        [{
+                            font: []
+                        }],
+                        ["bold", "italic"],
+                        ["link", "blockquote", "code-block", "image"],
+                        [{
+                            list: "ordered"
+                        }, {
+                            list: "bullet"
+                        }],
+                        [{
+                            script: "sub"
+                        }, {
+                            script: "super"
+                        }],
+                        [{
+                            color: []
+                        }, {
+                            background: []
+                        }],
+                    ]
+                },
+            });
+            quill.on('text-change', function(delta, oldDelta, source) {
+                document.querySelector("input[name='jawaban']").value = quill.root.innerHTML;
+            });
+        </script>
 
 </body>
 
