@@ -41,11 +41,11 @@
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item ">
+            <!-- <li class="nav-item ">
                 <a class="nav-link" href="<?= base_url() ?>welcome/dashboard">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
-            </li>
+            </li> -->
 
             <!-- Divider -->
             <hr class="sidebar-divider">
@@ -75,18 +75,18 @@
             <hr class="sidebar-divider">
 
             <!-- Heading -->
-            <div class="sidebar-heading">
+            <!-- <div class="sidebar-heading">
                 Laporan
-            </div>
+            </div> -->
 
             <!-- Nav Item - Pages Collapse Menu -->
 
             <!-- Nav Item - Charts -->
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link" href="<?= base_url() ?>welcome/datapasien">
                     <i class="fas fa-fw fa-chart-area"></i>
                     <span>Data Pemeriksa </span></a>
-            </li>
+            </li> -->
         </ul>
         <!-- End of Sidebar -->
 

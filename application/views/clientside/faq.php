@@ -49,10 +49,25 @@
                 </div>
                 <div class="row justify-content-center mb-5">
                     <div class="col-xl shadow p-3 mb-5  border" style="background-color: white;">
-                        <p>1. Apa itu paru-paru?</p>
-                        <p>1. Apa itu paru-paru?</p>
-                        <p>1. Apa itu paru-paru?</p>
-                        <p>1. Apa itu paru-paru?</p>
+                        <div class="accordion accordion-flush" id="accordionFlushExample">
+                            <div class="accordion-item">
+                                <?php
+                                $no = 1;
+                                foreach ($faq as $key => $f) : ?>
+                                    <h3 class="accordion-header" id="panelsStayOpen-headingOne<?= $f['id']; ?>">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne<?= $f['id']; ?>" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne<?= $f['id']; ?>">
+                                            <?php echo $no++ . ". "; ?>
+                                            <?php echo $f['pertanyaan']; ?>
+                                        </button>
+                                    </h3>
+                                    <div id="panelsStayOpen-collapseOne<?= $f['id']; ?>" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne<?= $f['id']; ?>">
+                                        <div class="accordion-body">
+                                            <?php echo $f['jawaban'] ?>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

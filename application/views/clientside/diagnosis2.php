@@ -82,14 +82,14 @@
                                                 <div class="col-5">
                                                     <?php for ($i = 0; $i < count($hasil); $i++) {
                                                         for ($j = 0; $j < count($hasil[$i]); $j++) {
-                                                            printf($hasil[$i][$j]);
+                                                            print($hasil[$i][$j] . ",");
                                                         }
                                                     } ?>
                                                 </div>
                                             </div>
                                             <div class="row align-items-start pt-3">
                                                 <div class="col-3 ">
-                                                    Nilai Diagnosa Sistem
+                                                    Persentase Diagnosa Sistem
                                                 </div>
                                                 <div class="col-1 text-end">
                                                     :
@@ -98,9 +98,20 @@
 
                                                     <?php for ($i = 0; $i < count($persentase); $i++) {
                                                         for ($j = 0; $j < count($persentase[$i]); $j++) {
-                                                            printf($persentase[$i][$j]);
+                                                            print(number_format($persentase[$i][$j] * 100, 2, '.', ',') . "%");
                                                         }
                                                     } ?>
+                                                </div>
+                                            </div>
+                                            <div class="row align-items-start pt-3">
+                                                <div class="col-3 ">
+                                                    Tindakan
+                                                </div>
+                                                <div class="col-1 text-end">
+                                                    :
+                                                </div>
+                                                <div class="col">
+                                                    Sebaiknya anda melakukan pemeriksaan lebih lanjut ke dokter spesialis paru
                                                 </div>
                                             </div>
                                         </div>
