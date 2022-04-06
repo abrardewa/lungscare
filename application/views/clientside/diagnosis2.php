@@ -103,6 +103,20 @@
                                                     } ?>
                                                 </div>
                                             </div>
+                                            <!-- <div class="row align-items-start pt-3">
+                                <div class="col-3 ">
+                                    Waktu Eksekusi
+                                </div>
+                                <div class="col-1 text-end">
+                                    :
+                                </div>
+                                <div class="col">
+
+                                    <?php
+                                    print(number_format($waktu, 6, '.', ',') . "ms");
+                                    ?>
+                                </div>
+                            </div> -->
                                             <div class="row align-items-start pt-3">
                                                 <div class="col-3 ">
                                                     Tindakan

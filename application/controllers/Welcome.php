@@ -109,9 +109,9 @@ class Welcome extends CI_Controller
 			// 	}
 			// }
 			//perhatikan asiign bobot berat badan ke array dan perhatikan hubungannya dengan gejala, itu salah array
-			// $naivebayes = $this->naivebayes($jawaban, $bb);
-			$nd = $this->nbds($nama, $alamat, $jawaban, $bb, $gejala);
-			// $dempster = $this->dempstershafer($jawaban,$gejala);
+			$this->nbds($nama, $alamat, $jawaban, $bb, $gejala);
+			// $this->naivebayes($nama, $alamat, $jawaban, $bb, $gejala);
+			// $this->dempster($nama, $alamat, $jawaban, $bb, $gejala);
 			// $persentase = 0;
 			// $data = array(
 			// 	'nama' => $nama,
@@ -162,61 +162,6 @@ class Welcome extends CI_Controller
 		// // redirect('Welcome/hasildiagnosis');
 	}
 
-	public function naivebayes($data, $bb)
-	{
-		$n = 1;
-		$jlh2 = $this->Modelpenyakit->jlhgejala();
-		$jlh = $this->Modeldiagnosis->jumlahdata();
-		$m = $jlh + 1;
-		// get value of p in naive bayes
-		$get = $this->Modelpenyakit->jlhpenyakit();
-		$simpansementara = array_unique($get, SORT_REGULAR);
-		$listpenyakit = array_values($simpansementara);
-		$p = 1 / count($simpansementara);
-		$gejaladiagnosis = $this->Modeldiagnosis->gejala();			//get array gejala from diagnosis table
-		$gejalapenyakit = $this->Modelpenyakit->jlhgejala();		//get array gejala from penyakit table
-		$nc = array();
-		for ($i = 0; $i < count($gejalapenyakit); $i++) {
-			if ($gejalapenyakit[$i] != "beratbadanturun") {	//get value for berat badan
-				for ($j = 0; $j < count($gejaladiagnosis); $j++) {
-					if ($gejalapenyakit[$i] == $gejaladiagnosis[$j]) {		//get value for all nc ex berat badan
-						array_push($nc, $data[$j]);
-					}
-				}
-			} else {
-				array_push($nc, $this->fuzzy($bb, 15));
-			}
-		}
-		$hasil = array();
-		$sum = 1;
-		$simpanpav = array();
-		$newnc = array();
-		$newgejala = array();
-		$batasatas = (1 + ($m * $p)) / ($n + $m);
-		$batasbawah = (0 + ($m * $p)) / ($n + $m);
-		for ($i = 0; $i < count($listpenyakit); $i++) {				// get Final Value of disease and push to array hasil
-			for ($j = 0; $j < count($nc); $j++) {
-				if ($get[$j] == $listpenyakit[$i]) {
-					$pav = ($nc[$j] + ($m * $p)) / ($n + $m);
-					array_push($simpanpav, $pav);
-					array_push($newnc, $nc[$j]);
-					array_push($newgejala, $gejalapenyakit[$j]);
-				}
-				// $sum = $sum * $pav;
-			}
-			// array_push($hasil, $sum);
-			// $sum = 1;
-		}
-		// $max = max($hasil);
-		// // get max value from array hasil
-		// for ($i = 0; $i < count($listpenyakit); $i++) {
-		// 	if ($hasil[$i] == $max) {
-		// 		print_r($hasil[$i]);									// get max value from array hasil
-		// 		$hasildiagnosa = $listpenyakit[$i];					//get disease based the max value
-		// 	}
-		// }
-		$this->dempstershafer($simpanpav, $batasatas, $batasbawah, $newnc, $newgejala);
-	}
 	private function fuzzy($value, $limit)
 	{
 		// $limit2 = $limit * 0.5;
@@ -235,8 +180,159 @@ class Welcome extends CI_Controller
 		}
 		return $newvalue;
 	}
+	public function naivebayes($nama, $alamat, $data, $bb, $gejala)
+	{
+		$start = microtime(true);
+		$n = 1;
+		$jlh = $this->Modeldiagnosis->jumlahdata();
+		$m = $jlh + 1;
+		// get value of p in naive bayes
+		$get = $this->Modelpenyakit->jlhpenyakit();
+		$simpansementara = array_unique($get, SORT_REGULAR);
+		$listpenyakit = array_values($simpansementara);
+		$p = 1 / count($simpansementara);
+		$gejaladiagnosis = $this->Modeldiagnosis->gejala();			//get array gejala from diagnosis table
+		$gejalapenyakit = $this->Modelpenyakit->jlhgejala();		//get array gejala from penyakit table
+		$nc = array();
+		$newgejala = array();
+		if ($bb != 0) {
+			array_push($nc, $this->fuzzy($bb, 20));
+			array_push($newgejala, "beratbadanturun");
+		}
+		for ($i = 0; $i < count($data); $i++) {
+			if ($data[$i] != "0") {
+				array_push($nc, $data[$i]);
+				array_push($newgejala, $gejala[$i]);
+			}
+		}
+		$banding = $newgejala;
+
+		$hasil = array();
+		$simpanpav = array();
+		$newnc = array();
+		$sementara1 = array();	//save array value of nc
+		$sementara2 = array();	//save array value of gejalapenyakit
+		$sementara3 = array();	//save array value of penyakit
+		for ($i = 0; $i < count($gejalapenyakit); $i++) {		//delete gejala,nc,and get if value of nc =0
+			for ($j = 0; $j < count($newgejala); $j++) {
+				if ($newgejala[$j] == $gejalapenyakit[$i]) {
+					array_push($sementara1, $nc[$j]);
+					array_push($sementara2, $newgejala[$j]);
+					array_push($sementara3, $get[$i]);
+				}
+			}
+		}
+		$newnc = array();
+		$newgejala = array();
+		$newget = array();
+		//create class (base of penyakit)
+		for ($i = 0; $i < count($listpenyakit); $i++) {
+			$nc = array();
+			$gejala = array();
+			$get = array();
+			for ($j = 0; $j < count($sementara3); $j++) {
+				if ($listpenyakit[$i] == $sementara3[$j]) {
+					array_push($nc, $sementara1[$j]);
+					array_push($gejala, $sementara2[$j]);
+					array_push($get, $sementara3[$j]);
+				}
+			}
+			array_push($newnc, $nc);
+			array_push($newgejala, $gejala);
+			array_push($newget, $get);
+		}
+		$get = $newget;
+		$newget = array();
+		$nc = $newnc;
+		$newnc = array();
+		for ($i = 0; $i < count($banding); $i++) {
+			for ($j = 0; $j < count($get); $j++) {
+				for ($k = 0; $k < count($get[$j]); $k++) {
+					if ($banding[$i] != $newgejala[$j][$k]) {
+						array_push($newgejala[$j], $banding[$i]);
+						$simpansementara = array_unique($newgejala[$j], SORT_REGULAR);
+						$newgejala[$j] = array_values($simpansementara);
+					}
+				}
+			}
+		}
+		$gejala = $newgejala;
+		$newgejala = array();
+		for ($i = 0; $i < count($gejala); $i++) {
+			if ($gejala[$i] == NULL) {
+				unset($gejala[$i]);
+				unset($nc[$i]);
+				unset($get[$i]);
+			}
+		}
+		$gejala = array_values($gejala);
+		$nc = array_values($nc);
+		$get = array_values($get);
+		for ($i = 0; $i < count($gejala); $i++) {
+			$x = array();		//for set sembarang nilai nc
+			$y = array();		//for set sembarang nilai get
+			for ($j = 0; $j < count($gejala[$i]); $j++) {
+				array_push($x, "0");
+				array_push($y, "x");
+			}
+			array_push($newnc, $x);
+			array_push($newget, $y);
+		}
+		for ($i = 0; $i < count($nc); $i++) {
+			for ($j = 0; $j < count($nc[$i]); $j++) {
+				$newnc[$i][$j] = $nc[$i][$j];
+				$newget[$i][$j] = $get[$i][$j];
+			}
+		}
+		for ($i = 0; $i < count($newnc); $i++) {
+			for ($j = 0; $j < count($newnc[$i]); $j++) {
+				if ($newget[$i][$j] == "x") {
+					$newget[$i][$j] = $newget[$i][$j - 1];
+				}
+			}
+		}
+		for ($i = 0; $i < count($listpenyakit); $i++) {
+			$sum = 1;
+			for ($j = 0; $j < count($newget); $j++) {
+				for ($k = 0; $k < count($newget[$j]); $k++) {
+					if ($listpenyakit[$i] == $newget[$j][$k]) {
+						$pav = ($newnc[$j][$k] + ($m * $p)) / ($n + $m);
+						$sum = $sum * $pav;
+					}
+				}
+			}
+			array_push($hasil, $sum);
+		}
+		for ($i = 0; $i < count($hasil); $i++) {
+			if ($hasil[$i] == 1) {
+				$hasil[$i] = 0;
+			}
+		}
+		// var_dump($hasil);
+		$max = max($hasil);
+		$persentase1 = array();
+		array_push($persentase1, $max * 100);
+		$persentase2 = array();
+		array_push($persentase2, $persentase1);
+		$hasilpenyakit = array();
+		$hasilpenyakit2 = array();
+		// get max value from array hasil
+		for ($i = 0; $i < count($listpenyakit); $i++) {
+			if ($hasil[$i] == $max) {
+				// print_r($hasil[$i]);									// get max value from array hasil
+				$hasildiagnosa = $listpenyakit[$i];					//get disease based the max value
+			}
+		}
+		array_push($hasilpenyakit, $hasildiagnosa);
+		array_push($hasilpenyakit2, $hasilpenyakit);
+		// var_dump($max);
+		// var_dump($hasilpenyakit);
+		$waktu = microtime(true) - $start;
+		$this->hasildiagnosis($nama, $alamat, $hasilpenyakit2, $persentase2, $waktu);
+	}
 	public function nbds($nama, $alamat, $jawaban, $bb, $gejala)
 	{
+		$start = microtime(true);
 		$newbobot = array();
 		$newgejala = array();
 		if ($bb != 0) {
@@ -541,6 +637,354 @@ class Welcome extends CI_Controller
 							}
 						}
 					}
+				}
+			}
+			$nilai = max($tempnilai);
+			// var_dump($nilai);
+			$simpanpersentase = array();
+			array_push($simpanpersentase, $nilai);
+			$persentase = array();
+			array_push($persentase, $simpanpersentase);
+			for ($i = 0; $i < count($tempnilai); $i++) {
+				if ($tempnilai[$i] == $nilai) {
+					// var_dump($temppenyakit[$i]);
+					array_push($hasilpenyakit, $temppenyakit[$i]);
+				}
+			}
+			// var_dump($persentase);
+			// var_dump($hasilpenyakit);
+		} elseif (count($simpanpav) == 1) {
+			$hasilpenyakit = array();
+			$nilai = max($simpanpav);
+			$simpanpersentase = array();
+			array_push($simpanpersentase, $nilai);
+			$persentase = array();
+			array_push($persentase, $simpanpersentase);
+			for ($i = 0; $i < count($simpanpav); $i++) {
+				if ($simpanpav[$i] == $nilai) {
+					array_push($hasilpenyakit, $newpenyakit[$i]);
+				}
+			}
+		} else {
+			$simpanpersentase = array();
+			array_push($simpanpersentase, 0);
+			$temp = array();
+			$persentase = array();
+			array_push($persentase, $persentase);
+			$hasilpenyakit = array();
+			array_push($temp, "Anda tidak mengidap penyakit paru");
+			array_push($hasilpenyakit, $temp);
+		}
+
+		$waktu = microtime(true) - $start;
+		$this->hasildiagnosis($nama, $alamat, $hasilpenyakit, $persentase, $waktu);
+	}
+	public function dempster($nama, $alamat, $jawaban, $bb, $gejala)
+	{
+		$start = microtime(true);
+		$newbobot = array();
+		$newgejala = array();
+		if ($bb != 0) {
+			array_push($newbobot, $this->fuzzy($bb, 20));
+			array_push($newgejala, "beratbadanturun");
+		}
+		for ($i = 0; $i < count($jawaban); $i++) {
+			if ($jawaban[$i] != "0") {
+				array_push($newbobot, $jawaban[$i]);
+				array_push($newgejala, $gejala[$i]);
+			}
+		}
+
+		$n = 1;
+		$jlh = $this->Modeldiagnosis->jumlahdata();
+		$m = $jlh + 1;
+		// get value of p in naive bayes
+		$getpenyakitdb = $this->Modelpenyakit->jlhpenyakit();
+		$getgejaladb = $this->Modelpenyakit->jlhgejala();
+		$simpansementara = array_unique($getpenyakitdb, SORT_REGULAR);
+		$listpenyakit = array_values($simpansementara);
+		$p = 1 / count($simpansementara);
+
+		$simpanpav = array();
+		$newnc = array();
+		$batasatas = 1;
+		// get Final Value of disease and push to array hasil
+		for ($j = 0; $j < count($newgejala); $j++) {
+			$pav = $newbobot[$j];
+			array_push($simpanpav, $pav);
+			// array_push($newnc, $nc[$j]);
+			// array_push($newgejala, $gejalapenyakit[$j]);
+
+		}
+
+		$newpenyakit = array();
+		for ($i = 0; $i < count($newgejala); $i++) {
+			$sementara = array();
+			for ($j = 0; $j < count($getgejaladb); $j++) {
+				if ($newgejala[$i] == $getgejaladb[$j]) {
+					array_push($sementara, $getpenyakitdb[$j]);
+				}
+			}
+			array_push($newpenyakit, $sementara);
+		}
+
+		if (count($simpanpav) > 1) {
+			//Dempster Shafer proccess
+			$nextpenyakit = array();
+			$temppenyakit = array();
+			$hasilpenyakit = array();
+			$nextb = array();
+			$tempnilai = array();
+			for ($i = 1; $i < count($simpanpav); $i++) {
+				if ($i == 1) {
+					$temp = array();
+					$b1 = $simpanpav[0];
+					$b2 = $simpanpav[$i];
+					$p1 = $batasatas - $b1;
+					$p2 = $batasatas - $b2;
+					$b1b2 = $b1 * $b2;
+					$p1b2 = $p1 * $b2;
+					$b1p2 = $b1 * $p2;
+					$p1p2 = $p1 * $p2;
+					array_push($nextb, $b1b2);
+					array_push($nextb, $p1b2);
+					array_push($nextb, $b1p2);
+					array_push($nextb, $p1p2);
+					for ($j = 0; $j < count($newpenyakit[$i - 1]); $j++) {
+						for ($k = 0; $k < count($newpenyakit[$i]); $k++) {
+							if ($newpenyakit[$i - 1][$j] == $newpenyakit[$i][$k]) {
+								array_push($temp, $newpenyakit[$i][$k]);
+							}
+						}
+					}
+					array_push($temppenyakit, $temp);
+					array_push($temppenyakit, $newpenyakit[$i]);
+					array_push($temppenyakit, $newpenyakit[$i - 1]);
+					$o = array();
+					array_push($o, "o");
+					array_push($temppenyakit, $o);
+					// var_dump($temppenyakit);
+					for ($j = 0; $j < count($temppenyakit); $j++) {
+						if ($temppenyakit[$j] == NULL) {
+							array_push($temppenyakit[$j], "n");
+						}
+					}
+					$cek = 0;
+					$tambahvalueo = 0;
+					for ($j = 0; $j < count($temppenyakit); $j++) {
+						for ($k = 0; $k < count($temppenyakit[$j]); $k++) {
+							if ($temppenyakit[$j][$k] == "n") {
+								$cek++;
+								$tambahvalueo = $tambahvalueo + $nextb[$j];
+							}
+						}
+					}
+					$pembagi = 0;
+					for ($j = 0; $j < count($nextb); $j++) {
+						$pembagi += $nextb[$j];
+					}
+					// var_dump($tambahvalueo);
+					$temp = $temppenyakit;
+					$simpansementara = array_unique($temppenyakit, SORT_REGULAR);
+					$temppenyakit = array_values($simpansementara);
+					// var_dump($temppenyakit);
+					for ($j = 0; $j < count($temppenyakit); $j++) {
+						$sum = 0;
+						for ($k = 0; $k < count($temp); $k++) {
+							if ($temppenyakit[$j] == $temp[$k]) {
+								$sum = ($sum + $nextb[$k]);
+							}
+						}
+						if ($cek >= 1) {
+							$sum = $sum / ($pembagi - $tambahvalueo);
+						} else {
+							$sum = $sum / $pembagi;
+						}
+						array_push($tempnilai, $sum);
+					}
+					// var_dump($tempnilai);
+
+					// for ($j = 0; $j < count($temppenyakit); $j++) {
+					// 	for ($k = 0; $k < count($temppenyakit[$j]); $k++) {
+					// 		if ($temppenyakit[$j][$k] != "n" && $temppenyakit[$j][$k] != "o") {
+					// 			$sum = $sum + $tempnilai[$j];
+					// 		}
+					// 	}
+					// }
+					for ($j = 0; $j < count($temppenyakit); $j++) {
+						for ($k = 0; $k < count($temppenyakit[$j]); $k++) {
+							if ($temppenyakit[$j][$k] == "n") {
+								unset($temppenyakit[$j][$k]);
+								unset($tempnilai[$j]);
+							}
+							// elseif ($temppenyakit[$j][$k] == "o") {
+							// 	unset($tempnilai[$j]);
+							// }
+						}
+					}
+					for ($j = 0; $j <	count($temppenyakit); $j++) {
+						if ($temppenyakit[$j] == NULL) {
+							unset($temppenyakit[$j]);
+						}
+					}
+					$temppenyakit = array_values($temppenyakit);
+					// for ($j = 0; $j < count($temppenyakit); $j++) {
+					// 	for ($k = 0; $k < count($temppenyakit[$j]); $k++) {
+					// 		if ($temppenyakit[$j][$k] == "o") {
+					// 			array_push($tempnilai, ($batasatas - $sum));
+					// 		}
+					// 	}
+					// }
+					$tempnilai = array_values($tempnilai);
+					// for ($j = 0; $j < count($duplicatetemppenyakit); $j++) {
+					// 	if ($j != (count($duplicatetemppenyakit) - 1)) {
+					// 		for ($k = $j + 1; $k < count($duplicatetemppenyakit); $k++) {
+					// 			if ($duplicatetemppenyakit[$j] == $duplicatetemppenyakit[$k]) {
+					// 				$tempnilai[$j] = $tempnilai[$j] + $tempnilai[$k];
+					// 				unset($temppenyakit[$k]);
+					// 				unset($tempnilai[$k]);
+					// 				$tempnilai = array_values($tempnilai);
+					// 				$temppenyakit = array_values($temppenyakit);
+					// 			}
+					// 		}
+					// 	}
+					// }
+				} else {
+
+					$b = $simpanpav[$i];
+					$p = $batasatas - $b;
+
+					$nextb = array();
+					// $nextp = array();
+					$temp = array();
+					for ($j = 0; $j < count($tempnilai); $j++) {
+						$temp2 = array();
+						$tempb = $tempnilai[$j] * $b;
+						// $tempp = $tempnilai[$j] * $p;
+						array_push($nextb, $tempb);
+					}
+					for ($j = 0; $j < count($temppenyakit); $j++) {
+						$simpan = array();
+						for ($k = 0; $k < count($temppenyakit[$j]); $k++) {
+							if ($temppenyakit[$j][$k] != "o") {
+								for ($l = 0; $l < count($newpenyakit[$i]); $l++) {
+									if ($temppenyakit[$j][$k] == $newpenyakit[$i][$l]) {
+										array_push($simpan, $temppenyakit[$j][$k]);
+									} elseif ($temppenyakit[$j][$k] == end($temppenyakit[$j]) && $newpenyakit[$i][$l] == end($newpenyakit[$i]) && empty($simpan)) {
+										$n = "n";
+										array_push($simpan, $n);
+									}
+								}
+							}
+						}
+						if ($simpan != NULL) {
+							array_push($temp, $simpan);
+						}
+						for ($k = 0; $k < count($temppenyakit[$j]); $k++) {
+							if ($temppenyakit[$j][$k] == "o") {
+								array_push($temp, $newpenyakit[$i]);
+							}
+						}
+					}
+					// array_push($nextp, $tempp);
+					// for ($m = 0; $m < count($temppenyakit[$j]); $m++) {
+					// 	$simpan = array();
+					// 	if ($temppenyakit[$j][$m] != "o") {
+					// 		for ($k = 0; $k < count($newpenyakit[$i]); $k++) {
+					// 			for ($l = 0; $l < count($temppenyakit[$j]); $l++) {
+					// 				if ($newpenyakit[$i][$k] == $temppenyakit[$j][$l]) {
+					// 					$x = $temppenyakit[$j][$l];
+					// 					array_push($simpan, $x);
+					// 				}
+					// 			}
+					// 		}
+					// 		// $a = array_unique($simpan, SORT_REGULAR);
+
+					// 		// $simpan = array_values($a);
+					// 		array_push($temp, $simpan);
+					// 	} else {
+					// 		array_push($temp, $newpenyakit[$i]);
+					// 	}
+					// }
+					// $a = array_unique($temp, SORT_REGULAR);
+
+					// array_push($temp2, $x);
+					// array_push($temp, $temp2);
+
+					// $temp = array_values($a);
+
+					for ($j = 0; $j < count($tempnilai); $j++) {
+						$tempb = $tempnilai[$j] * $p;
+						array_push($nextb, $tempb);
+						// if ($temppenyakit[$j] != "o") {
+						// 	array_push($temp, $temppenyakit[$j]);
+						// } else {
+						// 	array_push($temp, "o");
+						// }
+					}
+					for ($j = 0; $j < count($temppenyakit); $j++) {
+						$simpan = array();
+						for ($k = 0; $k < count($temppenyakit[$j]); $k++) {
+							if ($temppenyakit[$j][$k] != "o") {
+								array_push($simpan, $temppenyakit[$j][$k]);
+							}
+						}
+						if ($simpan != NULL) {
+							array_push($temp, $simpan);
+						}
+						for ($k = 0; $k < count($temppenyakit[$j]); $k++) {
+							if ($temppenyakit[$j][$k] == "o") {
+								$o = ["o"];
+								array_push($temp, $o);
+							}
+						}
+					}
+					$cek = 0;
+					$tambahvalueo = 0;
+					for ($j = 0; $j < count($temp); $j++) {
+						for ($k = 0; $k < count($temp[$j]); $k++) {
+							if ($temp[$j][$k] == "n") {
+								$cek++;
+								$tambahvalueo = $tambahvalueo + $nextb[$j];
+							}
+						}
+					}
+					//Bagian bawah dempster shafer (Teliti lebih dalam) #bug
+
+					$simpansementara = array_unique($temp, SORT_REGULAR);
+					$temppenyakit = array_values($simpansementara);
+
+					$pembagi = 0;
+					for ($j = 0; $j < count($nextb); $j++) {
+						$pembagi += $nextb[$j];
+					}
+
+					$tempnilai = array();
+					for ($j = 0; $j < count($temppenyakit); $j++) {
+						$sum = 0;
+						for ($k = 0; $k < count($temp); $k++) {
+							if ($temppenyakit[$j] == $temp[$k]) {
+								$sum = ($sum + $nextb[$k]);
+							}
+						}
+						if ($cek >= 1) {
+							$sum = $sum / ($pembagi - $tambahvalueo);
+						} else {
+							$sum = $sum / $pembagi;
+						}
+						array_push($tempnilai, $sum);
+					}
+					//unset n
+					for ($j = 0; $j < count($temppenyakit); $j++) {
+						for ($k = 0; $k < count($temppenyakit[$j]); $k++) {
+							if ($temppenyakit[$j][$k] == "n") {
+								unset($temppenyakit[$j]);
+								unset($tempnilai[$j]);
+								$temppenyakit = array_values($temppenyakit);
+								$tempnilai = array_values($tempnilai);
+							}
+						}
+					}
 					// if ($i == 5) {
 					// 	var_dump($pembagi);
 					// 	var_dump($temp);
@@ -564,7 +1008,7 @@ class Welcome extends CI_Controller
 				}
 			}
 			$nilai = max($tempnilai);
-			// var_dump($nilai);
+			var_dump($tempnilai);
 			$simpanpersentase = array();
 			array_push($simpanpersentase, $nilai);
 			$persentase = array();
@@ -609,15 +1053,17 @@ class Welcome extends CI_Controller
 		// );
 		// $this->Modelpemeriksa->insert_data($data);
 		// $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Data Berhasil Ditambahkan!</div>');
-		$this->hasildiagnosis($nama, $alamat, $hasilpenyakit, $persentase);
+		$waktu = microtime(true) - $start;
+		$this->hasildiagnosis($nama, $alamat, $hasilpenyakit, $persentase, $waktu);
 	}
-	public function hasildiagnosis($nama, $alamat, $hasilpenyakit, $persentase)
+	public function hasildiagnosis($nama, $alamat, $hasilpenyakit, $persentase, $waktu)
 	{
 		// printf($nama);
 		$data['nama'] = $nama;
 		$data['alamat'] = $alamat;
 		$data['hasil'] = $hasilpenyakit;
 		$data['persentase'] = $persentase;
+		$data['waktu'] = $waktu;
 
 		$this->load->view('clientside/diagnosis2', $data);
 	}
